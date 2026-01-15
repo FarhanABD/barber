@@ -4,7 +4,7 @@
 
 namespace App\Models;
 
-use AppModels\Booking;
+use App\Models\Booking;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,8 +40,8 @@ class Barber extends Model
     }
 
     public function transactions()
-{
-    return $this->hasMany(Transaction::class);
-}
+    {
+        return $this->hasMany(Transaction::class, 'barber_id');
+    }
 
 }

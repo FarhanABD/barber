@@ -1,25 +1,18 @@
 <?php
 
-// app/Models/Booking.php
+namespace App\Models;
 
-namespace AppModels;
-
-use App\Models\User;
-use App\Models\Barber;
-use App\Models\Service;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
     use HasFactory;
 
-    /**
-     * Kolom yang dapat diisi secara massal.
-     */
+    protected $table = 'bookings';
+
     protected $fillable = [
-        'user_id',
+        'no_antrian',
         'nama_customer',
         'barber_id',
         'service_id',
@@ -30,37 +23,26 @@ class Booking extends Model
     ];
 
     /**
-     * Casting otomatis untuk kolom waktu.
+     * Relasi ke Barber
      */
-    protected $casts = [
-        'start_time' => 'datetime',
-        'end_time' => 'datetime',
-    ];
-
-    // --- Relasi (Hubungan) ---
-
-    /**
-     * Relasi ke Customer (User): Booking dimiliki oleh satu user (customer).
-     */
-    public function customer(): BelongsTo
+    public function barber()
     {
-        // Kita menggunakan nama 'customer' di sini, tetapi merujuk ke Model User
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Barber::class);
     }
 
     /**
-     * Relasi ke Barber: Booking ditujukan untuk satu barber.
+     * Relasi ke Service
      */
-    public function barber(): BelongsTo
+    public function service()
     {
-        return $this->belongsTo(Barber::class, 'barber_id');
+        return $this->belongsTo(Service::class);
     }
 
     /**
-     * Relasi ke Service: Booking ini memesan satu jenis layanan.
+     * Scope booking hari ini
      */
-    public function service(): BelongsTo
+    public function scopeToday($query)
     {
-        return $this->belongsTo(Service::class, 'service_id');
+        return $query->whereDate('created_at', now()->toDateString());
     }
 }

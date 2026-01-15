@@ -3,19 +3,18 @@
         <div class="row mb-5">
           <div class="col-md-4">
             <h3 class="mb-4">About</h3>
-            <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut, quod!</p>
+            <p class="mb-4">Percayakan rambutmu pada ahlinya</p>
             <ul class="list-unstyled ">
-              <li class="d-flex"><span class="mr-3"><span class="icon ion-ios-location"></span></span><span class="">34 Street Name, City Name Here, United States</span></li>
-              <li class="d-flex"><span class="mr-3"><span class="icon ion-ios-telephone"></span></span><span class="">+1 242 4942 290</span></li>
+              <li class="d-flex"><span class="mr-3"><span class="icon ion-ios-location"></span></span><span class="">RPFF+9P5, Tegal Boto Kidul, Sumbersari, Kec. Sumbersari, Kabupaten Jember, Jawa Timur 68124</span></li>
+              <li class="d-flex"><span class="mr-3"><span class="icon ion-ios-telephone"></span></span><span class="">+62 857-8446-6395</span></li>
               <li class="d-flex"><span class="mr-3"><span class="icon ion-email"></span></span><span class="">info@yourdomain.com</span></li>
             </ul>
           </div>
           <div class="col-md-2">
             <h3 class="mb-4">Links</h3>
             <ul class="list-unstyled ">
-              <li><a href="#">About</a></li>
-              <li><a href="#">Hairstyle</a></li>
-              <li><a href="#">Contact</a></li>
+              <li><a href="{{ route('about') }}">About</a></li>
+              <li><a href="{{ route('hairstyle') }}">Hairstyle</a></li>
             </ul>
           </div>
         

@@ -6,7 +6,30 @@
 
     <link rel="icon" type="image/png" href="{{ asset('uploads/favicon.png') }}">
 
-    <title>Admin Panel</title>
+  <title>
+    @auth
+        @if(auth()->user()->role === 'admin')
+            Admin Panel
+        @elseif(auth()->user()->role === 'user')
+            Barber Panel
+        @else
+            Panel
+        @endif
+    @else
+        Panel
+    @endauth
+  
+</title>
+
+  <style>
+                .sidebar-menu .menu-divider {
+            height: 1px;
+            margin: 10px 15px;
+            background-color: rgba(255, 255, 255, 0.15);
+            list-style: none;
+                }
+    </style>
+
 
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -42,50 +65,59 @@
     <script src="{{ asset('dist/js/air-datepicker.min.js') }}"></script>
     <script src="{{ asset('dist/tinymce/tinymce.min.js') }}"></script>
     <script src="{{ asset('dist/js/bootstrap4-toggle.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body>
 <div id="app">
     <div class="main-wrapper">
-     @yield('main_content')
-
+        @yield('main_content')
     </div>
 </div>
 
 <script src="{{ asset('dist/js/scripts.js') }}"></script>
-<script src="{{ asset('dist/js/custom.js') }}6"></script>
-  @if($errors->any())
-                                @foreach ($errors->all() as $error)
-                                    <script>
-                                        iziToast.show({
-                                            message: "{{ $error }}",
-                                            position: 'topRight',
-                                            color: 'red'
-                                        })
-                                    </script>
-                                @endforeach
-                            @endif
+<script src="{{ asset('dist/js/custom.js') }}"></script>
 
-                            @if(session('success'))
-                                <script>
-                                        iziToast.show({
-                                            message: "{{ session('success') }}",
-                                            position: 'topRight',
-                                            color: 'green'
-                                        })
-                                    </script>
-                            @endif
+{{-- 🔥 INI WAJIB --}}
+@stack('scripts')
 
-                            @if(session('error'))
-                                  <script>
-                                        iziToast.show({
-                                            message: "{{ session('error') }}",
-                                            position: 'topRight',
-                                            color: 'red'
-                                        })
-                                    </script>
-                            @endif
+{{-- IziToast Error --}}
+@if($errors->any())
+    @foreach ($errors->all() as $error)
+        <script>
+            iziToast.show({
+                message: "{{ $error }}",
+                position: 'topRight',
+                color: 'red'
+            })
+        </script>
+    @endforeach
+@endif
 
+{{-- Success --}}
+@if(session('success'))
+    <script>
+        iziToast.show({
+            message: "{{ session('success') }}",
+            position: 'topRight',
+            color: 'green'
+        })
+    </script>
+@endif
+
+{{-- Error --}}
+@if(session('error'))
+    <script>
+        iziToast.show({
+            message: "{{ session('error') }}",
+            position: 'topRight',
+            color: 'red'
+        })
+    </script>
+@endif
 
 </body>
+</html>
+
 </html>

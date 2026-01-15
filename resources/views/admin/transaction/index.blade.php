@@ -8,7 +8,7 @@
 <div class="main-content">
     <section class="section">
         <div class="section-header justify-content-between">
-            <h1>Data Transaksi</h1>
+            <h1>Data Transaksi Barber</h1>
         </div>
 
         <div class="section-body">
@@ -79,22 +79,27 @@
                                                     Rp {{ number_format($transaction->total_price, 0, ',', '.') }}
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('admin.transactions.show', $transaction->id) }}"
-                                                       class="btn btn-info btn-sm">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
+    <a href="{{ route('admin.transactions.show', $transaction->id) }}"
+       class="btn btn-info btn-sm">
+        <i class="fas fa-eye"></i>
+    </a>
 
-                                                    <form action="{{ route('admin.transactions.destroy', $transaction->id) }}"
-                                                          method="POST"
-                                                          class="d-inline"
-                                                          onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                </td>
+    @if(auth()->user()->role === 'admin')
+        <form action="{{ route('admin.transactions.destroy', $transaction->id) }}"
+              method="POST"
+              class="d-inline"
+              onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
+            @csrf
+            @method('DELETE')
+            <button class="btn btn-danger btn-sm">
+                <i class="fas fa-trash"></i>
+            </button>
+        </form>
+    @else
+        <span class="badge badge-secondary">No Access</span>
+    @endif
+</td>
+
                                             </tr>
                                         @empty
                                             <tr>
@@ -114,5 +119,29 @@
         </div>
     </section>
 </div>
+@push('scripts')
+@if(session('print_transaction_id'))
+<script>
+Swal.fire({
+    title: 'Cetak Resi?',
+    text: 'Apakah Anda ingin mencetak resi transaksi ini?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, Cetak',
+    cancelButtonText: 'Tidak'
+}).then((result) => {
+    if (result.isConfirmed) {
+        window.open(
+            "{{ route('admin.transactions.print', session('print_transaction_id')) }}",
+            '_blank'
+        );
+    }
+});
+</script>
+@endif
+@endpush
+
+
+
 
 @endsection

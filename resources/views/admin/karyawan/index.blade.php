@@ -7,8 +7,13 @@
         <div class="section-header justify-content-between">
             <h1>Karyawan</h1>
             <div class="ml-auto">
-                <a href="{{ route('admin.karyawan.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Tambahkan Karyawan</a>
-            </div>
+    @if(auth()->user()->role === 'admin')
+        <a href="{{ route('admin.karyawan.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Tambahkan Karyawan
+        </a>
+    @endif
+</div>
+
         </div>
         <div class="section-body">
             <div class="row">
@@ -31,11 +36,18 @@
     <td>{{ $key + 1 }}</td>
     <td>{{ $karyawan->name }}</td>
 
-    <td class="pt_10 pb_10">
+  <td class="pt_10 pb_10">
+    @if(auth()->user()->role === 'admin')
         <a href="{{ route('admin.karyawan.edit', $karyawan->id) }}"
            class="btn btn-primary btn-sm">
             <i class="fas fa-edit"></i>
         </a>
+        <a href="{{ route('admin.karyawan.show', $karyawan->id) }}"
+   class="btn btn-info btn-sm"
+   title="Detail Karyawan">
+   <i class="fas fa-eye"></i>
+</a>
+
 
         <form action="{{ route('admin.karyawan.destroy', $karyawan->id) }}"
               method="POST"
@@ -48,7 +60,11 @@
                 <i class="fas fa-trash"></i>
             </button>
         </form>
-    </td>
+    @else
+        <span class="badge badge-secondary">No Access</span>
+    @endif
+</td>
+
 </tr>
 @empty
 <tr>

@@ -12,12 +12,14 @@ class Transaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'transaction_code',
-        'customer_name',
-        'barber_id',
-        'total_price',
-        'diskon',
-    ];
+    'transaction_code',
+    'no_antrian',
+    'customer_name',
+    'barber_id',
+    'diskon',
+    'total_price',
+];
+
 
     /* ================= RELATION ================= */
 

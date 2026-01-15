@@ -2,17 +2,16 @@
         <nav class="navbar navbar-expand-lg main-navbar">
             <form class="form-inline mr-auto">
                 <ul class="navbar-nav mr-3">
-                    <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a></li>
+                    <li>
+                     <a href="#" id="sidebarToggle" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a>
                 </ul>
             </form>
             <ul class="navbar-nav navbar-right justify-content-end rightsidetop">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img alt="image" src="{{ asset('frontend/images/Antarshuka.png') }}" class="rounded-circle-custom">
+                        <img alt="image" src="{{ asset('frontend/images/logo-barber-fix-no-hoax.png') }}" class="rounded-circle-custom">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href=""><i class="far fa-user"></i> Edit Profile</a></li>
-                        <li>
                             <form action="{{ route('admin.logout') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="dropdown-item">
@@ -24,3 +23,9 @@
                 </li>
             </ul>
         </nav>
+        <script>
+document.getElementById('sidebarToggle').addEventListener('click', function (e) {
+    e.preventDefault();
+    document.body.classList.toggle('sidebar-mini');
+});
+</script>

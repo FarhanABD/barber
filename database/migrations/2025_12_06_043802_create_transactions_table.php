@@ -18,6 +18,13 @@ return new class extends Migration {
                   ->onDelete('restrict');
 
             $table->decimal('total_price', 12, 2)->default(0);
+            Schema::table('transactions', function (Blueprint $table) {
+            $table->foreignId('booking_id')
+                ->nullable()
+                ->constrained('bookings')
+                ->nullOnDelete();
+        });
+
 
             $table->timestamps();
         });

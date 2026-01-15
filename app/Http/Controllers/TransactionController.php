@@ -3,19 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barber;
+use App\Models\Booking;
 use App\Models\Service;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Models\TransactionItem;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Exports\TransactionsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TransactionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
    public function index(Request $request)
 {
     $query = Transaction::with('barber');
@@ -45,11 +44,6 @@ class TransactionController extends Controller
     return view('admin.transaction.index', compact('transactions'));
 }
 
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $barbers  = Barber::all();
@@ -58,9 +52,7 @@ class TransactionController extends Controller
         return view('transactions.create', compact('barbers', 'services'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
   public function store(Request $request)
 {
     $request->validate([
@@ -69,30 +61,33 @@ class TransactionController extends Controller
         'services'      => 'required|array',
         'services.*'    => 'exists:services,id',
         'diskon'        => 'nullable|integer|min:0|max:100',
+        'booking_id'    => 'nullable|exists:bookings,id',
     ]);
 
-    DB::transaction(function () use ($request) {
 
-        // Generate kode transaksi
-        $transactionCode = 'TRX-' . date('Ymd') . '-' . str_pad(
-            Transaction::whereDate('created_at', now())->count() + 1,
-            4,
-            '0',
-            STR_PAD_LEFT
-        );
+    $transaction = null;
 
-        // Simpan transaksi (total sementara 0)
+        DB::transaction(function () use ($request, &$transaction) {
+
+        $noAntrian = $this->generateNoAntrian();
+
         $transaction = Transaction::create([
-            'transaction_code' => $transactionCode,
-            'customer_name'    => $request->customer_name,
-            'barber_id'        => $request->barber_id,
-            'diskon'           => $request->diskon, // persen
-            'total_price'      => 0,
+            'transaction_code' => 'TRX-' . now()->format('Ymd') . '-' . str_pad(
+                Transaction::whereDate('created_at', now())->count() + 1,
+                4,
+                '0',
+                STR_PAD_LEFT
+            ),
+            'no_antrian'    => $noAntrian,
+            'customer_name'=> $request->customer_name,
+            'barber_id'    => $request->barber_id,
+            'diskon'       => $request->diskon,
+            'total_price'  => 0,
+            'booking_id'   => $request->booking_id, // 🔥
         ]);
 
         $totalAwal = 0;
 
-        // Simpan item layanan
         foreach ($request->services as $serviceId) {
             $service = Service::findOrFail($serviceId);
 
@@ -105,44 +100,47 @@ class TransactionController extends Controller
             $totalAwal += $service->price;
         }
 
-        // Hitung diskon
-        $diskonPersen = $request->diskon;
-        $nilaiDiskon  = ($diskonPersen / 100) * $totalAwal;
-        $totalAkhir   = $totalAwal - $nilaiDiskon;
+        $diskon = ($request->diskon / 100) * $totalAwal;
 
-        // Update total harga setelah diskon
         $transaction->update([
-            'total_price' => $totalAkhir
+            'total_price' => $totalAwal - $diskon
         ]);
+
+        // 🔥 UPDATE STATUS BOOKING
+        if ($request->booking_id) {
+            Booking::where('id', $request->booking_id)
+                ->where('status', 'confirmed')
+                ->update([
+                    'status' => 'completed'
+                ]);
+        }
     });
 
     return redirect()
         ->route('admin.transactions.index')
+        ->with('print_transaction_id', $transaction->id)
         ->with('success', 'Transaksi berhasil disimpan');
 }
+
 
 
     /**
      * Display the specified resource.
      */
-    public function show(Transaction $transaction)
-    {
-        $transaction->load(['barber', 'items.service']);
+   public function show(Transaction $transaction)
+{
+    $transaction->load(['barber', 'items.service']);
 
-        return view('transactions.show', compact('transaction'));
-    }
+    return view('admin.transaction.show', compact('transaction'));
+}
+
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Transaction $transaction)
     {
-        $barbers  = Barber::all();
-        $services = Service::all();
-
-        $transaction->load('items');
-
-        return view('transactions.edit', compact('transaction', 'barbers', 'services'));
+     
     }
 
     /**
@@ -150,30 +148,15 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        $request->validate([
-            'customer_name' => 'required',
-            'barber_id'     => 'required|exists:barbers,id',
-        ]);
-
-        $transaction->update([
-            'customer_name' => $request->customer_name,
-            'barber_id'     => $request->barber_id,
-        ]);
-
-        return redirect()
-            ->route('transactions.index')
-            ->with('success', 'Transaksi berhasil diperbarui');
+       
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Transaction $transaction)
+    public function destroy($id)
     {
-        $transaction->delete();
+        Transaction::findOrFail($id)->delete();
 
         return redirect()
-            ->route('transactions.index')
+            ->route('admin.transactions.index')
             ->with('success', 'Transaksi berhasil dihapus');
     }
 
@@ -184,4 +167,36 @@ class TransactionController extends Controller
         'data-transaksi.xlsx'
     );
 }
+
+public function downloadPdf(Transaction $transaction)
+{
+    $transaction->load(['barber', 'items.service']);
+
+    $pdf = Pdf::loadView(
+        'admin.transaction.pdf',
+        compact('transaction')
+    );
+
+    return $pdf->download(
+        'resi-' . $transaction->transaction_code . '.pdf'
+    );
+}
+
+public function print(Transaction $transaction)
+{
+    $transaction->load(['barber', 'items.service']);
+    return view('admin.transaction.print', compact('transaction'));
+}
+
+private function generateNoAntrian()
+{
+    $today = now()->toDateString();
+
+    $lastAntrian = Transaction::whereDate('created_at', $today)
+        ->max('no_antrian');
+
+    return $lastAntrian ? $lastAntrian + 1 : 1;
+}
+
+
 }

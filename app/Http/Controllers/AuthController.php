@@ -43,7 +43,7 @@ class AuthController extends Controller
             }
 
             // Jika role lain (customer, barber), arahkan ke dashboard umum
-            return redirect()->intended('dashboard');
+            return redirect()->intended('admin/dashboard');
         }
 
         // Otentikasi Gagal

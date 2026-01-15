@@ -33,10 +33,37 @@ class KaryawanController extends Controller
             ->with('success', 'Barber berhasil ditambahkan');
     }
 
-    public function show(string $id)
+    public function show(Request $request, $id)
     {
-        //
+        $barber = Barber::findOrFail($id);
+
+        // FILTER TANGGAL
+        $from = $request->from ?? now()->startOfMonth()->toDateString();
+        $to   = $request->to   ?? now()->endOfMonth()->toDateString();
+
+        // =========================
+        // QUERY DARI TRANSACTIONS
+        // =========================
+        $transactions = $barber->transactions()
+            ->whereBetween('created_at', [
+                $from . ' 00:00:00',
+                $to   . ' 23:59:59'
+            ])
+            ->selectRaw('
+                COUNT(id) as total_orang,
+                SUM(total_price) as total_omset
+            ')
+            ->first();
+
+        return view('admin.karyawan.show', [
+            'barber'     => $barber,
+            'from'       => $from,
+            'to'         => $to,
+            'totalOrang' => $transactions->total_orang ?? 0,
+            'totalOmset' => $transactions->total_omset ?? 0,
+        ]);
     }
+
 
     public function edit($id)
     {
@@ -60,11 +87,21 @@ class KaryawanController extends Controller
             ->with('success', 'Data karyawan berhasil diperbarui');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+    public function destroy($id)
+{
+    $karyawan = Barber::findOrFail($id);
+
+    if ($karyawan->transactions()->exists()) {
+        return redirect()
+            ->route('admin.karyawan.index')
+            ->with('error', 'Karyawan tidak bisa dihapus karena sudah memiliki transaksi.');
     }
+
+    $karyawan->delete();
+
+    return redirect()
+        ->route('admin.karyawan.index')
+        ->with('success', 'Karyawan berhasil dihapus.');
+}
+
 }

@@ -15,7 +15,7 @@
           <div class="col-md-8 text-center">
 
             <div class="mb-5 element-animate">
-              <img src="{{ asset('frontend/images/putih.png') }}" alt="Image placeholder" class="img-md-fluid">
+              <img src="{{ asset('frontend/images/logo-barber-fix-no-hoax.png') }}" alt="Image placeholder" class="img-md-fluid">
             </div>
 
           </div>
@@ -24,43 +24,7 @@
     </section>
     <!-- END section -->
 
-    <section class="quick-info element-animate" data-animate-effect="fadeInLeft">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 bgcolor">
-            <div class="row">
-              <div class="col-md-4 mb-3">
-                <div class="media">
-                  <div class="mr-3 icon-wrap"><span class="icon ion-ios-telephone"></span></div>
-                  <div class="media-body">
-                    <h5>+1 234 5633 342</h5>
-                    <p>Call us 24/7 we will get back to you ASAP</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 mb-3">
-                <div class="media">
-                  <div class="mr-3 icon-wrap"><span class="icon ion-location"></span></div>
-                  <div class="media-body">
-                    <h5>249 Division Rad</h5>
-                    <p>Fake st. New York, New York City,  PO 2923 USA</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 mb-3">
-                <div class="media">
-                  <div class="mr-3 icon-wrap"><span class="icon ion-android-time"></span></div>
-                  <div class="media-body">
-                    <h5>Daily: 8 am - 10 pm</h5>
-                    <p>Mon-Fri, Sunday <br> Saturday: Closed</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    @include('frontend.layouts.time')
     <!-- END section -->
 
 
@@ -182,7 +146,7 @@
         <div class="row justify-content-center mb-5">
           <div class="col-md-7 text-center">
             <h2>Keunggulan Barber</h2>
-            <p>Layanan unggulan barber Antarshuka</p>
+            <p>Layanan unggulan barber Antarsukha</p>
           </div>
         </div>
         <div class="row">
@@ -257,7 +221,7 @@
         <div class="row justify-content-center align-items-center intro">
           <div class="col-md-8 text-center element-animate">
             <h2 class="mb-4"><span>Buat Janji Temu dan</span> Dapatkan Diskon sampai 25%</h2>
-            <p><a href="#" class="btn btn-black">Buat Janji Temu</a></p>
+            <p><a href="{{ route('booking.create') }}" class="btn btn-black">Buat Janji Temu</a></p>
           </div>
         </div>
       </div>

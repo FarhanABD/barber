@@ -8,33 +8,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-
             // Foreign Key Pelanggan
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             // Foreign Key Barber
             $table->foreignId('barber_id')->constrained()->cascadeOnDelete();
             // Foreign Key Layanan
             $table->foreignId('service_id')->constrained()->cascadeOnDelete();
-
             // Waktu Booking (mulai dan selesai)
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-            
             // Status Booking
             $table->enum('status', ['pending', 'confirmed', 'completed', 'canceled'])->default('pending');
-            
             // Total Harga
             $table->decimal('total_price', 10, 2);
-
             $table->timestamps();
-
             // Tambahkan index unik untuk menghindari booking ganda di waktu yang sama oleh barber yang sama
             $table->unique(['barber_id', 'start_time']);
         });
