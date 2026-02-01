@@ -1,48 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body { font-family: monospace; }
-    </style>
+<meta charset="UTF-8">
+<title>Print Resi</title>
+
+<style>
+body {
+    font-family: monospace;
+    font-size: 12px;
+}
+hr {
+    border-top: 1px dashed black;
+}
+</style>
+
 </head>
-<body onload="window.print()">
 
-
-
+<body onload="printPage()">
 
 <h3>ANGKRINGAN ANTARSUKHA</h3>
 <hr>
 
 Kode : {{ $transaction->kode_transaksi }}<br>
 Tanggal : {{ $transaction->tanggal->format('d/m/Y H:i') }}<br>
-Metode Pembayaran : {{ strtoupper($transaction->metode_pembayaran) }}
+Metode : {{ strtoupper($transaction->metode_pembayaran) }}
 
 <hr>
 
 @foreach($transaction->items as $item)
-{{ $item->menu->nama }} <br>
+{{ $item->menu->nama }}<br>
 {{ $item->qty }} x {{ number_format($item->harga) }}
 = {{ number_format($item->subtotal) }}
 <hr>
 @endforeach
 
-TOTAL : Rp {{ number_format($transaction->total) }}
+TOTAL : Rp {{ number_format($transaction->total) }}<br>
 
 @if($transaction->metode_pembayaran === 'cash')
-BAYAR : Rp {{ number_format($transaction->jumlah_bayar) }}  
-KEMBALI : Rp {{ number_format($transaction->kembalian) }}
+BAYAR : Rp {{ number_format($transaction->jumlah_bayar) }}<br>
+KEMBALI : Rp {{ number_format($transaction->kembalian) }}<br>
 @endif
 
-<body onload="printPage()">
+<hr>
+
+@include('admin.transaction-angkringan.partials.resi')
 
 <script>
 function printPage() {
+
     window.print();
-    setTimeout(() => window.close(), 500);
+
+    // Auto close supaya kembali ke POS
+    // setTimeout(() => {
+    //     window.close();
+    // }, 500);
+
 }
 </script>
-<hr style="border-top:2px dashed;">
-@include('admin.transaction-angkringan.partials.resi')
 
 </body>
 </html>

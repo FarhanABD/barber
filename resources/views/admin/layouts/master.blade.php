@@ -5,6 +5,7 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
 
     <link rel="icon" type="image/png" href="{{ asset('uploads/favicon.png') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 
   <title>
     @auth
@@ -47,6 +48,9 @@
     <link rel="stylesheet" href="{{  asset('dist/css/air-datepicker.min.css') }}">
     <link rel="stylesheet" href="{{  asset('dist/css/spacing.css') }}">
     <link rel="stylesheet" href="{{  asset('dist/css/custom.css') }}">
+    
+
+
 
     <script src="{{ asset('dist/js/jquery-3.7.0.min.js') }}"></script>
     <script src="{{ asset('dist/js/bootstrap.bundle.min.js') }}"></script>
@@ -116,6 +120,8 @@
         })
     </script>
 @endif
+
+@stack('scripts')
 
 </body>
 </html>

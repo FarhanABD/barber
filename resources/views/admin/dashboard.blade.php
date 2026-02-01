@@ -1,7 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-@include('admin.layouts.master')
 
+@extends('admin.layouts.master')
+
+@section('main_content')
 <body>
 <div id="app">
     <div class="main-wrapper">
@@ -191,17 +191,15 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>
-                        <select name="items[0][menu_id]" class="form-control menu-select">
-                            <option value="">-- Pilih Menu --</option>
-                            @foreach($menus as $menu)
-                                <option value="{{ $menu->id_menu }}"
-                                    data-harga="{{ $menu->harga }}">
-                                    {{ $menu->nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </td>
+                   <td>
+    <select name="items[0][menu_id]" class="form-control menu-select"> <option value="">-- Pilih Menu --</option>
+        @foreach($menus as $menu)
+            <option value="{{ $menu->id_menu }}" data-harga="{{ $menu->harga }}">
+                {{ $menu->nama }}
+            </option>
+        @endforeach
+    </select>
+</td>
                     <td>
                         <input type="text" class="form-control harga" readonly value="0">
                     </td>
@@ -229,6 +227,17 @@
                 </tr>
             </tbody>
         </table>
+        <div class="mb-3">
+    <label class="form-label">Kasir Bertugas</label>
+    <select name="nama_kasir" class="form-control" required>
+        <option value="">-- Pilih Kasir --</option>
+        <option value="Caca">Caca</option>
+        <option value="Randi">Randi</option>
+        <option value="Hiba">Hiba</option>
+        <option value="Balqis">Balqis</option>
+    </select>
+</div>
+
 
         <div class="mb-3">
     <label class="form-label">Metode Pembayaran</label>
@@ -260,8 +269,6 @@
     </div>
 </div>
 
-
-
         <div class="text-end mb-3">
             <h5>Total: Rp <span id="totalAngkringan">0</span></h5>
         </div>
@@ -283,10 +290,82 @@
 
     </div>
 </div>
-
 <script src="{{ asset('dist/js/scripts.js') }}"></script>
 <script src="{{ asset('dist/js/custom.js') }}"></script>
+@if(session('print_transaction_id'))
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const id = "{{ session('print_transaction_id') }}";
+
+    if (confirm("Cetak struk sekarang?")) {
+
+        fetch(`/admin/transaction-angkringan/${id}/json`)
+        .then(res => res.json())
+        .then(data => {
+            printToRawBT(data);
+        });
+
+    }
+
+});
+</script>
+@endif
+<script>
+function printToRawBT(t) {
+
+    let struk = "";
+    struk += "ANGKRINGAN ANTARSUKHA\r\n";
+    struk += "-----------------------------\r\n";
+    struk += "Kode : " + t.kode_transaksi + "\r\n";
+    struk += "Kasir : " + t.nama_kasir + "\r\n";
+    struk += "Tanggal : " + formatTanggal(t.tanggal) + "\r\n";
+    struk += "-----------------------------\r\n";
+
+
+    t.items.forEach(item => {
+        struk += item.menu.nama + "\r\n";
+        struk += item.qty + " x " + rupiah(item.harga) +
+                 " = " + rupiah(item.subtotal) + "\r\n";
+
+    });
+
+    struk += "-----------------------------\r\n";
+    struk += "TOTAL : " + rupiah(t.total) + "\r\n";
+
+
+    if (t.metode_pembayaran === 'cash') {
+        struk += "BAYAR : " + rupiah(t.jumlah_bayar) + "\n";
+        struk += "KEMBALI : " + rupiah(t.kembalian) + "\n";
+    }
+
+    struk += "-----------------------------\n";
+    struk += "TERIMA KASIH\r\n\r\n\r\n";
+
+
+    let encoded = encodeURIComponent(struk);
+
+     window.location.href =
+    "intent://print/#Intent;" +
+    "scheme=rawbt;" +
+    "package=ru.a402d.rawbtprinter;" +
+    "action=android.intent.action.VIEW;" +
+    "S.text=" + encoded + ";" +
+    "end";
+
+}
+
+
+// helper
+function rupiah(val) {
+    return "Rp " + new Intl.NumberFormat("id-ID").format(val);
+}
+
+function formatTanggal(tgl) {
+    return tgl.replace('T',' ').substring(0,19);
+}
+
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -367,20 +446,38 @@ document.addEventListener('DOMContentLoaded', function () {
     let index = 1;
 
     // Tambah baris
-    document.getElementById('addRowAngkringan').addEventListener('click', function () {
-        const row = tableBody.rows[0].cloneNode(true);
+    // Tambah baris Angkringan
+document.getElementById('addRowAngkringan').addEventListener('click', function () {
+    const tableBody = document.querySelector('#angkringanTable tbody');
+    const firstRow = tableBody.rows[0];
+    
+    // Hancurkan select2 pada baris pertama sebelum cloning agar tidak error
+    $(firstRow).find('.menu-select').select2('destroy');
 
-        row.querySelector('.menu-select').name = `items[${index}][menu_id]`;
-        row.querySelector('.qty').name = `items[${index}][qty]`;
+    const row = firstRow.cloneNode(true);
 
-        row.querySelector('.menu-select').value = '';
-        row.querySelector('.harga').value = 0;
-        row.querySelector('.qty').value = 1;
-        row.querySelector('.subtotal').value = 0;
+    // Update atribut name agar unik (menggunakan timestamp agar tidak bentrok)
+    const newIndex = Date.now();
+    row.querySelector('.menu-select').name = `items[${newIndex}][menu_id]`;
+    row.querySelector('.qty').name = `items[${newIndex}][qty]`;
 
-        tableBody.appendChild(row);
-        index++;
+    // Reset nilai
+    row.querySelector('.menu-select').value = '';
+    row.querySelector('.harga').value = 0;
+    row.querySelector('.qty').value = 1;
+    row.querySelector('.subtotal').value = 0;
+
+    tableBody.appendChild(row);
+
+    // Inisialisasi ulang Select2 untuk semua (baris lama & baru)
+    $('.menu-select').select2({
+        placeholder: '-- Pilih Menu --',
+        width: '100%',
+        allowClear: true
+        // minimumResultsForSearch: Infinity // HAPUS ATAU KOMENTARI BARIS INI
     });
+    index++;
+});
 
     // Hapus baris
     tableBody.addEventListener('click', function (e) {
@@ -393,15 +490,18 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Pilih menu
-    tableBody.addEventListener('change', function (e) {
-        if (e.target.classList.contains('menu-select')) {
-            const row = e.target.closest('tr');
-            const harga = e.target.selectedOptions[0]?.dataset.harga || 0;
+    $(document).on('select2:select', '.menu-select', function (e) {
 
-            row.querySelector('.harga').value = harga;
-            hitungSubtotal(row);
-        }
-    });
+    const row = $(this).closest('tr');
+
+    const harga = $(this).find(':selected').data('harga') || 0;
+
+    row.find('.harga').val(harga);
+
+    hitungSubtotal(row[0]);
+
+});
+
 
     // Tombol +
     tableBody.addEventListener('click', function (e) {
@@ -469,9 +569,84 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const form = document.querySelector('#formAngkringan form');
+    const metodeSelect = document.querySelector('[name="metode_pembayaran"]');
+    const jumlahBayar = document.getElementById('jumlahBayar');
+    const totalText = document.getElementById('totalAngkringan');
 
+    form.addEventListener('submit', function (e) {
 
+        if (metodeSelect.value === 'cash') {
 
-</body>
-</html>
+            const total = parseInt(totalText.innerText.replace(/\./g, '')) || 0;
+            const bayar = parseInt(jumlahBayar.value) || 0;
+
+            if (bayar < total) {
+                e.preventDefault();
+
+                alert('❌ Uang pembayaran kurang!');
+
+                jumlahBayar.focus();
+                return false;
+            }
+
+        }
+
+    });
+
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const metode = document.querySelector('[name="metode_pembayaran"]');
+    const bayar = document.getElementById('jumlahBayar');
+    const btn = document.querySelector('#formAngkringan button[type="submit"]');
+
+    function cek() {
+        if (metode.value === 'cash') {
+            btn.disabled = !bayar.value;
+        } else {
+            btn.disabled = false;
+        }
+    }
+
+    metode.addEventListener('change', cek);
+    bayar.addEventListener('input', cek);
+
+});
+</script>
+@push('scripts')
+<script>
+$(document).ready(function() {
+    function initSelect2() {
+        $('.menu-select').select2({
+            placeholder: '-- Pilih Menu --',
+            width: '100%',
+            allowClear: true,
+            // Jika ingin search bar selalu muncul, jangan gunakan minimumResultsForSearch
+            // Atau set ke angka rendah, misal: 1
+            minimumResultsForSearch: 0 
+        });
+    }
+
+    initSelect2();
+});
+</script>
+<script>
+const kasirSelect = document.querySelector('[name="nama_kasir"]');
+
+if (localStorage.getItem('kasir')) {
+    kasirSelect.value = localStorage.getItem('kasir');
+}
+
+kasirSelect.addEventListener('change', function(){
+    localStorage.setItem('kasir', this.value);
+});
+</script>
+
+@endpush
+@endsection

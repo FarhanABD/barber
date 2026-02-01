@@ -74,11 +74,16 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
     Route::patch(
     'categories/{category}/toggle-status',[CategoryController::class, 'toggleStatus'])->name('admin.categories.toggle-status');
-    Route::get('/transaction-angkringan', [TransactionAngkringanController::class, 'index'])->name('transaction-angkringan.index');
+
+    Route::get('/transaction-angkringan/{id}/json', 
+    [TransactionAngkringanController::class,'printData'])
+    ->name('transaction-angkringan.json');
+
 
     Route::get('transaction-angkringan/{id}/print',[TransactionAngkringanController::class, 'print'])->name('transaction-angkringan.print');
 
     Route::get('/transaction-angkringan/export',[TransactionAngkringanController::class, 'export'])->name('transaction-angkringan.export');
+
 
     Route::get('/income', [IncomeController::class, 'index'])
     ->name('income');

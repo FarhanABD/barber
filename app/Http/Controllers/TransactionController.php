@@ -58,38 +58,36 @@ class TransactionController extends Controller
     $request->validate([
         'customer_name' => 'required|string|max:255',
         'barber_id'     => 'required|exists:barbers,id',
-        'services'      => 'required|array',
+        'services'      => 'required|array|min:1',
         'services.*'    => 'exists:services,id',
         'diskon'        => 'nullable|integer|min:0|max:100',
         'booking_id'    => 'nullable|exists:bookings,id',
     ]);
 
+    DB::beginTransaction();
 
-    $transaction = null;
-
-        DB::transaction(function () use ($request, &$transaction) {
+    try {
 
         $noAntrian = $this->generateNoAntrian();
 
+        // Generate kode transaksi (lebih aman)
+        $lastNumber = Transaction::whereDate('created_at', today())->lockForUpdate()->count() + 1;
+
         $transaction = Transaction::create([
-            'transaction_code' => 'TRX-' . now()->format('Ymd') . '-' . str_pad(
-                Transaction::whereDate('created_at', now())->count() + 1,
-                4,
-                '0',
-                STR_PAD_LEFT
-            ),
-            'no_antrian'    => $noAntrian,
-            'customer_name'=> $request->customer_name,
-            'barber_id'    => $request->barber_id,
-            'diskon'       => $request->diskon,
-            'total_price'  => 0,
-            'booking_id'   => $request->booking_id, // 🔥
+            'transaction_code' => 'TRX-' . now()->format('Ymd') . '-' . str_pad($lastNumber, 4, '0', STR_PAD_LEFT),
+            'no_antrian'       => $noAntrian,
+            'customer_name'   => $request->customer_name,
+            'barber_id'       => $request->barber_id,
+            'diskon'          => $request->diskon ?? 0,
+            'total_price'     => 0,
+            'booking_id'      => $request->booking_id,
         ]);
 
         $totalAwal = 0;
 
         foreach ($request->services as $serviceId) {
-            $service = Service::findOrFail($serviceId);
+
+            $service = Service::select('id', 'price')->findOrFail($serviceId);
 
             TransactionItem::create([
                 'transaction_id' => $transaction->id,
@@ -100,27 +98,45 @@ class TransactionController extends Controller
             $totalAwal += $service->price;
         }
 
-        $diskon = ($request->diskon / 100) * $totalAwal;
+        // Hitung diskon
+        $diskonPersen = $request->diskon ?? 0;
+        $potongan = ($diskonPersen / 100) * $totalAwal;
 
+        $totalAkhir = $totalAwal - $potongan;
+
+        // Update total
         $transaction->update([
-            'total_price' => $totalAwal - $diskon
+            'total_price' => $totalAkhir
         ]);
 
-        // 🔥 UPDATE STATUS BOOKING
+        // Update status booking
         if ($request->booking_id) {
+
             Booking::where('id', $request->booking_id)
                 ->where('status', 'confirmed')
                 ->update([
                     'status' => 'completed'
                 ]);
-        }
-    });
 
-    return redirect()
-        ->route('admin.transactions.index')
-        ->with('print_transaction_id', $transaction->id)
-        ->with('success', 'Transaksi berhasil disimpan');
+        }
+
+        DB::commit();
+
+        return redirect()
+            ->route('admin.transactions.index')
+            ->with('print_transaction_id', $transaction->id)
+            ->with('success', 'Transaksi berhasil disimpan');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()
+            ->withInput()
+            ->with('error', 'Gagal menyimpan transaksi: ' . $e->getMessage());
+    }
 }
+
 
 
 

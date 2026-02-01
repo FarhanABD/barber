@@ -17,6 +17,7 @@ class TransactionAngkringan extends Model
         'jumlah_bayar',
         'kembalian',
         'status',
+        'nama_kasir',
         'mitra_id', // ⬅️ tambah
     ];
 

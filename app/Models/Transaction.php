@@ -18,6 +18,7 @@ class Transaction extends Model
     'barber_id',
     'diskon',
     'total_price',
+    'metode_pembayaran',
 ];
 
 

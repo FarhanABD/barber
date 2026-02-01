@@ -16,40 +16,66 @@
 
             {{-- FILTER --}}
             <div class="card-header">
-                <form action="{{ route('admin.transaction-angkringan.index') }}" method="GET" class="w-100">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <input type="date"
-                                   name="date"
-                                   class="form-control"
-                                   value="{{ request('date') }}">
-                        </div>
+               <form action="{{ route('admin.transaction-angkringan.index') }}" method="GET" class="w-100">
+    <div class="row">
 
-                        <div class="col-md-4">
-                            <input type="text"
-                                   name="search"
-                                   class="form-control"
-                                   placeholder="Cari Kode Transaksi"
-                                   value="{{ request('search') }}">
-                        </div>
+        {{-- Tanggal --}}
+        <div class="col-md-2 mb-2">
+            <input type="date"
+                   name="date"
+                   class="form-control"
+                   value="{{ request('date') }}">
+        </div>
 
-                        <div class="col-md-5">
-                            <button class="btn btn-primary">
-                                <i class="fas fa-search"></i> Filter
-                            </button>
+        {{-- Nama Kasir --}}
+        <div class="col-md-2 mb-2">
+            <input type="text"
+                   name="kasir"
+                   class="form-control"
+                   placeholder="Nama Kasir"
+                   value="{{ request('kasir') }}">
+        </div>
 
-                            <a href="{{ route('admin.transaction-angkringan.index') }}"
-                               class="btn btn-secondary">
-                                Reset
-                            </a>
+        {{-- Metode Pembayaran --}}
+        <div class="col-md-2 mb-2">
+            <select name="metode"
+                    class="form-control">
+                <option value="">-- Metode --</option>
+                <option value="cash" {{ request('metode') == 'cash' ? 'selected' : '' }}>Cash</option>
+                <option value="qris" {{ request('metode') == 'qris' ? 'selected' : '' }}>QRIS</option>
+                <option value="transfer" {{ request('metode') == 'transfer' ? 'selected' : '' }}>Transfer</option>
+            </select>
+        </div>
 
-                            <a href="{{ route('admin.transaction-angkringan.export', request()->query()) }}"
-                               class="btn btn-success">
-                                <i class="fas fa-file-excel"></i> Export Excel
-                            </a>
-                        </div>
-                    </div>
-                </form>
+        {{-- Kode Transaksi --}}
+        <div class="col-md-3 mb-2">
+            <input type="text"
+                   name="search"
+                   class="form-control"
+                   placeholder="Kode Transaksi"
+                   value="{{ request('search') }}">
+        </div>
+
+        {{-- Button --}}
+        <div class="col-md-3 mb-2">
+            <button class="btn btn-primary">
+                <i class="fas fa-search"></i> Filter
+            </button>
+
+            <a href="{{ route('admin.transaction-angkringan.index') }}"
+               class="btn btn-secondary">
+                Reset
+            </a>
+
+            <a href="{{ route('admin.transaction-angkringan.export', request()->query()) }}"
+               class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Export
+            </a>
+        </div>
+
+    </div>
+</form>
+
             </div>
 
             {{-- TABLE --}}
@@ -134,12 +160,41 @@ Swal.fire({
     cancelButtonText: 'Tidak'
 }).then((result) => {
     if (result.isConfirmed) {
-        window.open(
-            "{{ route('admin.transaction-angkringan.print', session('print_transaction_id')) }}",
-            '_blank'
-        );
+        printRawBT({{ session('print_transaction_id') }});
     }
 });
+
+
+function printRawBT(id){
+
+fetch(`/admin/transaction-angkringan/${id}/json`)
+.then(res => res.json())
+.then(trx => {
+
+    let struk = "";
+    struk += "ANGKRINGAN ANTARSUKHA\r\n";
+    struk += "------------------------------\r\n";
+    struk += "Kode : "+trx.kode+"\r\n";
+    struk += "Kasir : "+trx.kasir+"\r\n";
+    struk += "Tanggal : "+trx.tanggal+"\r\n";
+    struk += "------------------------------\r\n";
+
+    trx.items.forEach(i=>{
+        struk += i.nama+"\r\n";
+        struk += i.qty+" x "+i.harga+" = "+i.subtotal+"\r\n";
+    });
+
+    struk += "------------------------------\r\n";
+    struk += "TOTAL : "+trx.total+"\r\n";
+    struk += "TERIMA KASIH\r\n\r\n\r\n";
+
+    let encoded = encodeURIComponent(struk);
+
+    window.location.href = "rawbt://print?text=" + encoded;
+
+});
+}
 </script>
 @endif
 @endpush
+

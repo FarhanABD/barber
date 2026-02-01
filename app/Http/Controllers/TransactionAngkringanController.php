@@ -16,28 +16,39 @@ class TransactionAngkringanController extends Controller
      * List transaksi
      */
     public function index(Request $request)
-    {
-        $query = TransactionAngkringan::query();
+{
+    $query = TransactionAngkringan::query();
 
-        // Filter tanggal
-        if ($request->filled('date')) {
-            $query->whereDate('tanggal', $request->date);
-        }
-
-        // Search kode transaksi
-        if ($request->filled('search')) {
-            $query->where('kode_transaksi', 'like', '%' . $request->search . '%');
-        }
-
-        $transactions = $query
-            ->orderBy('tanggal', 'desc')
-            ->get();
-
-        return view(
-            'admin.transaction-angkringan.index',
-            compact('transactions')
-        );
+    // Filter tanggal
+    if ($request->filled('date')) {
+        $query->whereDate('tanggal', $request->date);
     }
+
+    // Filter kasir
+    if ($request->filled('kasir')) {
+        $query->where('nama_kasir', 'like', '%' . $request->kasir . '%');
+    }
+
+    // Filter metode pembayaran
+    if ($request->filled('metode')) {
+        $query->where('metode_pembayaran', $request->metode);
+    }
+
+    // Filter kode transaksi
+    if ($request->filled('search')) {
+        $query->where('kode_transaksi', 'like', '%' . $request->search . '%');
+    }
+
+    $transactions = $query
+        ->orderBy('tanggal', 'desc')
+        ->get();
+
+    return view(
+        'admin.transaction-angkringan.index',
+        compact('transactions')
+    );
+}
+
 
 
     /**
@@ -60,6 +71,7 @@ class TransactionAngkringanController extends Controller
     'items.*.menu_id'    => 'required|exists:menus,id_menu',
     'items.*.qty'        => 'required|integer|min:1',
     'metode_pembayaran'  => 'required|in:cash,qris,transfer',
+    'nama_kasir' => 'required|string|max:100',
     'jumlah_bayar'       => 'nullable|required_if:metode_pembayaran,cash|numeric|min:0',
 ]);
 
@@ -94,6 +106,7 @@ class TransactionAngkringanController extends Controller
                 'metode_pembayaran' => $request->metode_pembayaran,
                 'jumlah_bayar'      => $jumlahBayar,
                 'kembalian'         => $kembalian,
+                'nama_kasir'        => $request->nama_kasir,
                 'status'            => 'paid',
                 'mitra_id'          => $firstMenu->mitra_id,
             ]);
@@ -164,6 +177,27 @@ public function export(Request $request)
 
     return view('admin.transaction-angkringan.print', compact('transaction'));
 }
+public function printData($id)
+{
+    $trx = TransactionAngkringan::with('items.menu')->findOrFail($id);
+
+    return response()->json([
+        'kode' => $trx->kode_transaksi,
+        'kasir' => $trx->nama_kasir,
+        'tanggal' => $trx->created_at->format('d-m-Y H:i'),
+        'total' => number_format($trx->total,0,',','.'),
+        'items' => $trx->items->map(function($i){
+            return [
+                'nama'=>$i->menu->nama,
+                'qty'=>$i->qty,
+                'harga'=>number_format($i->harga,0,',','.'),
+                'subtotal'=>number_format($i->subtotal,0,',','.')
+            ];
+        })
+    ]);
+}
+
+
 
 
 }
