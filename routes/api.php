@@ -1,8 +1,10 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController as ApiAuthController;
+use App\Http\Controllers\Api\MenuController;
+use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\BarberTransactionController;
 use App\Http\Controllers\Api\AngkringanTransactionController;
+use App\Http\Controllers\Api\AuthController as ApiAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,5 +23,10 @@ Route::post('/barber/transaction', [BarberTransactionController::class, 'store']
 
 // ANGKRINGAN
 Route::post('/angkringan/transaction', [AngkringanTransactionController::class, 'store']);
+
+Route::get('/menus', [MenuController::class, 'index']);
+
+Route::get('/services', [ServiceController::class, 'index']);
+
 
 });
