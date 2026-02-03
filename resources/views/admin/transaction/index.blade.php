@@ -111,6 +111,11 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            {{-- TAMBAHKAN KODE INI --}}
+                            <div class="mt-4">
+                                {{ $transactions->links() }}
+                            </div>
                         </div>
 
                     </div>

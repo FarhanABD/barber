@@ -41,7 +41,8 @@ class TransactionAngkringanController extends Controller
 
     $transactions = $query
         ->orderBy('tanggal', 'desc')
-        ->get();
+        ->paginate(10)
+        ->withQueryString();
 
     return view(
         'admin.transaction-angkringan.index',
