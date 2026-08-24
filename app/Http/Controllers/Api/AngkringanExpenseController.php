@@ -75,7 +75,7 @@ class AngkringanExpenseController extends Controller
             }
 
             $file = $request->file('bukti_resi');
-            $path = $file->store('bukti_resi', 'public');
+            $path = $file->store('images/pengeluaran', 'public');
 
             $expense->update([
                 'bukti_resi' => $path,
