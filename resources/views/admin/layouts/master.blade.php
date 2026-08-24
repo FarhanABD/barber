@@ -48,9 +48,6 @@
     <link rel="stylesheet" href="{{  asset('dist/css/air-datepicker.min.css') }}">
     <link rel="stylesheet" href="{{  asset('dist/css/spacing.css') }}">
     <link rel="stylesheet" href="{{  asset('dist/css/custom.css') }}">
-    
-
-
 
     <script src="{{ asset('dist/js/jquery-3.7.0.min.js') }}"></script>
     <script src="{{ asset('dist/js/bootstrap.bundle.min.js') }}"></script>

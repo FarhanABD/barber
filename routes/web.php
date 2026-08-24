@@ -14,10 +14,12 @@ use App\Http\Controllers\{
     TransactionAngkringanController,
     MitraController,
     IncomeController,
+    AngkringanExpenseController,
 };
 
 /* ================= PUBLIC ================= */
-
+// =================== ROUTE ANGKRINGAN ======================//
+Route::get('/angkringan', [DashboardController::class, 'dashboardAngkringan'])->name('dashboard-angkringan');
 Route::get('/', [DashboardController::class, 'dashboard'])->name('dashboard');
 Route::get('/hairstyle', [DashboardController::class, 'hairstyle'])->name('hairstyle');
 Route::get('/about', [DashboardController::class, 'about'])->name('about');
@@ -88,6 +90,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/income', [IncomeController::class, 'index'])
     ->name('income');
 
+    Route::resource('angkringan-expense', AngkringanExpenseController::class)->only(['index', 'destroy']);
+    Route::patch('angkringan-expense/{id}/status', [AngkringanExpenseController::class, 'updateStatus'])->name('angkringan-expense.status');
+
 
           Route::resource(
         'transaction-angkringan',
@@ -98,6 +103,3 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('mitras/{id}/show',[MitraController::class, 'show'])->name('mitras.show');
     Route::get('karyawan/{id}', [KaryawanController::class, 'show'])->name('karyawan.show');
 });
-
-// =================== ROUTE ANGKRINGAN ======================//
-Route::get('/angkringan', [DashboardController::class, 'dashboardAngkringan'])->name('dashboard-angkringan');

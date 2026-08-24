@@ -14,13 +14,15 @@ class MenuController extends Controller
         ->get()
         ->map(function($m){
 
-            return [
-                'id' => $m->id_menu,
-                'nama' => $m->nama,
-                'harga' => $m->harga,
-                'gambar' => $m->gambar,
-                'deskripsi' => $m->deskripsi,
-            ];
+           return [
+    'id' => $m->id_menu,     // 🔥 FIX PENTING
+    'nama' => $m->nama,
+    'harga' => $m->harga,
+    'mitra_id' => $m->mitra_id,
+    'gambar' => $m->gambar,
+    'deskripsi' => $m->deskripsi,
+];
+
         });
 
     return response()->json([

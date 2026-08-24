@@ -19,12 +19,25 @@
                <form action="{{ route('admin.transaction-angkringan.index') }}" method="GET" class="w-100">
     <div class="row">
 
-        {{-- Tanggal --}}
-        <div class="col-md-2 mb-2">
-            <input type="date"
-                   name="date"
-                   class="form-control"
-                   value="{{ request('date') }}">
+        {{-- Rentang Tanggal --}}
+        <div class="col-md-4 mb-2">
+            <div class="input-group">
+                <input type="date"
+                       name="start_date"
+                       class="form-control"
+                       value="{{ request('start_date') }}"
+                       data-toggle="tooltip"
+                       title="Tanggal Mulai">
+                <div class="input-group-append input-group-prepend">
+                    <span class="input-group-text">s/d</span>
+                </div>
+                <input type="date"
+                       name="end_date"
+                       class="form-control"
+                       value="{{ request('end_date') }}"
+                       data-toggle="tooltip"
+                       title="Tanggal Selesai">
+            </div>
         </div>
 
         {{-- Nama Kasir --}}
@@ -48,7 +61,7 @@
         </div>
 
         {{-- Kode Transaksi --}}
-        <div class="col-md-3 mb-2">
+        <div class="col-md-2 mb-2">
             <input type="text"
                    name="search"
                    class="form-control"
@@ -57,20 +70,20 @@
         </div>
 
         {{-- Button --}}
-        <div class="col-md-3 mb-2">
-            <button class="btn btn-primary">
+        <div class="col-md-2 mb-2">
+            <button class="btn btn-primary w-100 mb-1">
                 <i class="fas fa-search"></i> Filter
             </button>
-
-            <a href="{{ route('admin.transaction-angkringan.index') }}"
-               class="btn btn-secondary">
-                Reset
-            </a>
-
-            <a href="{{ route('admin.transaction-angkringan.export', request()->query()) }}"
-               class="btn btn-success">
-                <i class="fas fa-file-excel"></i> Export
-            </a>
+            <div class="d-flex" style="gap: 5px;">
+                <a href="{{ route('admin.transaction-angkringan.index') }}"
+                   class="btn btn-secondary btn-sm flex-fill text-center">
+                    Reset
+                </a>
+                <a href="{{ route('admin.transaction-angkringan.export', request()->query()) }}"
+                   class="btn btn-success btn-sm flex-fill text-center" style="white-space: nowrap;">
+                    <i class="fas fa-file-excel"></i> Export
+                </a>
+            </div>
         </div>
 
     </div>

@@ -7,7 +7,7 @@
                 <div class="media">
                   <div class="mr-3 icon-wrap"><span class="icon ion-ios-telephone"></span></div>
                   <div class="media-body">
-                    <h5>+62 857-8446-6395</h5>
+                    <h5>+62 852-5888-2652</h5>
                     <p>Telepon kami 24/7, kami akan segera menghubungi Anda</p>
                   </div>
                 </div>
@@ -25,8 +25,8 @@
                 <div class="media">
                   <div class="mr-3 icon-wrap"><span class="icon ion-android-time"></span></div>
                   <div class="media-body">
-                    <h5>Daily: 8 am - 10 pm</h5>
-                    <p>Mon-Fri, Sunday <br> Saturday: Closed</p>
+                    <h5>Daily: 10:00 - 22:00</h5>
+                    <p>Senin-Jumat, Minggu <br> Sabtu: Closed</p>
                   </div>
                 </div>
               </div>

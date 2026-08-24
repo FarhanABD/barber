@@ -19,9 +19,15 @@
                 <div class="card-body">
                     <form method="GET">
                         <div class="row g-2 align-items-end">
-                            <div class="col-md-4">
-                                <label>Tanggal</label>
-                                <input type="date" name="date" value="{{ $date }}" class="form-control">
+                            <div class="col-md-5">
+                                <label>Rentang Tanggal</label>
+                                <div class="input-group">
+                                    <input type="date" name="start_date" value="{{ request('start_date', $startDate ?? '') }}" class="form-control" placeholder="Mulai">
+                                    <div class="input-group-append input-group-prepend">
+                                        <span class="input-group-text">s/d</span>
+                                    </div>
+                                    <input type="date" name="end_date" value="{{ request('end_date', $endDate ?? '') }}" class="form-control" placeholder="Selesai">
+                                </div>
                             </div>
                             <div class="col-md-3">
                                 <button class="btn btn-primary">Filter</button>

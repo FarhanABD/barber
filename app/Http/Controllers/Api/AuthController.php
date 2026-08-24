@@ -2,49 +2,37 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
 {
-    $request->validate([
-        'email' => 'required|email',
+    $credentials = $request->validate([
+        'email' => 'required',
         'password' => 'required'
     ]);
 
-    $user = User::where('email', $request->email)->first();
-
-    if (!$user || !Hash::check($request->password, $user->password)) {
+    if (!Auth::attempt($credentials)) {
         return response()->json([
-            'status' => false,
-            'message' => 'Email atau password salah'
+            'message' => 'Login gagal'
         ], 401);
     }
 
-    // pastikan hanya kasir
-    if ($user->role !== 'kasir') {
-        return response()->json([
-            'status' => false,
-            'message' => 'Akun bukan kasir'
-        ], 403);
-    }
+    $user = Auth::user();
 
-    $token = $user->createToken('mobile-pos')->plainTextToken;
+    $token = $user->createToken('mobile-token')->plainTextToken;
 
     return response()->json([
-        'status' => true,
         'token' => $token,
-        'user' => [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'role' => $user->role
-        ]
+        'user' => $user
     ]);
 }
+
+
 
 }

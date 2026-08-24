@@ -120,10 +120,36 @@
 
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label for="diskon" class="form-label">Diskon</label>
-                                        <input type="text" name="diskon" id="diskon" class="form-control" placeholder="Masukkan Diskon Jika ada" >
-                                    </div>
+                                 <div class="row">
+    {{-- DISKON --}}
+    <div class="col-md-6">
+        <div class="mb-3">
+            <label for="diskon" class="form-label">Diskon (%)</label>
+            <input type="number"
+                   name="diskon"
+                   id="diskon"
+                   class="form-control"
+                   placeholder="Masukkan Diskon Jika Ada"
+                   min="0"
+                   max="100">
+        </div>
+    </div>
+
+    {{-- PILIH KASIR --}}
+    <div class="col-md-6">
+        <div class="mb-3">
+            <label for="nama_kasir" class="form-label">Pilih Kasir</label>
+            <select name="nama_kasir" id="nama_kasir" class="form-control">
+                <option value="">-- Pilih Kasir --</option>
+        <option value="Caca">Caca</option>
+        <option value="Randi">Randi</option>
+        <option value="Hiba">Hiba</option>
+        <option value="Balqis">Balqis</option>
+            </select>
+        </div>
+    </div>
+</div>
+
 
                                     <div class="mb-3">
                                         <label class="form-label">Pilih Layanan</label>
@@ -647,6 +673,28 @@ kasirSelect.addEventListener('change', function(){
     localStorage.setItem('kasir', this.value);
 });
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    const kasirSelect = document.getElementById('nama_kasir');
+
+    // 🔥 Ambil kasir terakhir dari localStorage
+    let lastKasir = localStorage.getItem('last_kasir');
+
+    if (lastKasir) {
+        kasirSelect.value = lastKasir;
+    }
+
+    // 🔥 Simpan kasir setiap kali berubah
+    kasirSelect.addEventListener('change', function() {
+        localStorage.setItem('last_kasir', this.value);
+    });
+
+});
+</script>
+
+
 
 @endpush
 @endsection

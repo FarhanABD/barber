@@ -41,8 +41,8 @@
                 <div class="media">
                   <div class="mr-3 icon-wrap"><span class="icon ion-ios-telephone"></span></div>
                   <div class="media-body">
-                    <h5>+1 234 5633 342</h5>
-                    <p>Call us 24/7 we will get back to you ASAP</p>
+                    <h5>+62 852-5888-2652</h5>
+                    <p>Hubungi kami unutk info lebih lanjut</p>
                   </div>
                 </div>
               </div>
@@ -59,8 +59,8 @@
                 <div class="media">
                   <div class="mr-3 icon-wrap"><span class="icon ion-android-time"></span></div>
                   <div class="media-body">
-                    <h5>Daily: 8 am - 10 pm</h5>
-                    <p>Mon-Fri, Sunday <br> Saturday: Closed</p>
+                     <h5>Daily: 10:00 - 22:00</h5>
+                    <p>Senin-Jumat, Minggu <br> Sabtu: Closed</p>
                   </div>
                 </div>
               </div>

@@ -20,11 +20,24 @@
                         <div class="card-header">
                             <form action="{{ route('admin.transactions.index') }}" method="GET" class="w-100">
                                 <div class="row">
-                                    <div class="col-md-3">
-                                        <input type="date"
-                                               name="date"
-                                               class="form-control"
-                                               value="{{ request('date') }}">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <input type="date"
+                                                   name="start_date"
+                                                   class="form-control"
+                                                   value="{{ request('start_date') }}"
+                                                   data-toggle="tooltip"
+                                                   title="Tanggal Mulai">
+                                            <div class="input-group-append input-group-prepend">
+                                                <span class="input-group-text">s/d</span>
+                                            </div>
+                                            <input type="date"
+                                                   name="end_date"
+                                                   class="form-control"
+                                                   value="{{ request('end_date') }}"
+                                                   data-toggle="tooltip"
+                                                   title="Tanggal Selesai">
+                                        </div>
                                     </div>
 
                                     <div class="col-md-4">
@@ -35,7 +48,7 @@
                                                value="{{ request('search') }}">
                                     </div>
 
-                                    <div class="col-md-5">
+                                    <div class="col-md-4 text-right">
                                         <button class="btn btn-primary">
                                             <i class="fas fa-search"></i> Filter
                                         </button>
@@ -59,56 +72,68 @@
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped" id="example1">
                                     <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>ID Transaksi</th>
-                                            <th>Nama Customer</th>
-                                            <th>Nama Barber</th>
-                                            <th>Total Harga</th>
-                                            <th width="120">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($transactions as $key => $transaction)
-                                            <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>{{ $transaction->transaction_code }}</td>
-                                                <td>{{ $transaction->customer_name }}</td>
-                                                <td>{{ $transaction->barber->name ?? '-' }}</td>
-                                                <td>
-                                                    Rp {{ number_format($transaction->total_price, 0, ',', '.') }}
-                                                </td>
-                                                <td>
-    <a href="{{ route('admin.transactions.show', $transaction->id) }}"
-       class="btn btn-info btn-sm">
-        <i class="fas fa-eye"></i>
-    </a>
+    <tr>
+        <th>No</th>
+        <th>ID Transaksi</th>
+        <th>Tanggal Transaksi</th> {{-- 🔥 TAMBAHAN --}}
+        <th>Nama Customer</th>
+        <th>Nama Barber</th>
+        <th>Total Harga</th>
+        <th width="120">Action</th>
+    </tr>
+</thead>
 
-    @if(auth()->user()->role === 'admin')
-        <form action="{{ route('admin.transactions.destroy', $transaction->id) }}"
-              method="POST"
-              class="d-inline"
-              onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
-            @csrf
-            @method('DELETE')
-            <button class="btn btn-danger btn-sm">
-                <i class="fas fa-trash"></i>
-            </button>
-        </form>
-    @else
-        <span class="badge badge-secondary">No Access</span>
-    @endif
-</td>
+                                  <tbody>
+@forelse ($transactions as $key => $transaction)
+<tr>
+    <td>{{ $key + 1 }}</td>
+    <td>{{ $transaction->transaction_code }}</td>
 
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="6" class="text-center">
-                                                    Data transaksi belum tersedia
-                                                </td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
+    {{-- 🔥 TANGGAL + HARI --}}
+    <td>
+        {{ \Carbon\Carbon::parse($transaction->created_at)
+            ->locale('id')
+            ->translatedFormat('l, d F Y') }}
+    </td>
+
+    <td>{{ $transaction->customer_name }}</td>
+    <td>{{ $transaction->barber->name ?? '-' }}</td>
+    <td>
+        Rp {{ number_format($transaction->total_price, 0, ',', '.') }}
+    </td>
+    <td>
+        <a href="{{ route('admin.transactions.show', $transaction->id) }}"
+           class="btn btn-info btn-sm">
+            <i class="fas fa-eye"></i>
+        </a>
+
+        @if(auth()->user()->role === 'admin')
+            <form action="{{ route('admin.transactions.destroy', $transaction->id) }}"
+                  method="POST"
+                  class="d-inline"
+                  onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
+                @csrf
+                @method('DELETE')
+                <button class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        @else
+            <span class="badge badge-secondary">No Access</span>
+        @endif
+    </td>
+</tr>
+@empty
+<tr>
+    <td colspan="7" class="text-center">
+        Data transaksi belum tersedia
+    </td>
+</tr>
+@endforelse
+</tbody>
+
+
+
                                 </table>
                             </div>
 

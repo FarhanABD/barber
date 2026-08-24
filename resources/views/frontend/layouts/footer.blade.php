@@ -6,7 +6,7 @@
             <p class="mb-4">Percayakan rambutmu pada ahlinya</p>
             <ul class="list-unstyled ">
               <li class="d-flex"><span class="mr-3"><span class="icon ion-ios-location"></span></span><span class="">RPFF+9P5, Tegal Boto Kidul, Sumbersari, Kec. Sumbersari, Kabupaten Jember, Jawa Timur 68124</span></li>
-              <li class="d-flex"><span class="mr-3"><span class="icon ion-ios-telephone"></span></span><span class="">+62 857-8446-6395</span></li>
+              <li class="d-flex"><span class="mr-3"><span class="icon ion-ios-telephone"></span></span><span class="">+62 852-5888-2652</span></li>
               <li class="d-flex"><span class="mr-3"><span class="icon ion-email"></span></span><span class="">info@yourdomain.com</span></li>
             </ul>
           </div>
@@ -21,8 +21,6 @@
           <div class="col-md-3">
             <h3>Connect</h3>
             <p>
-              <a href="#" class="p-2"><span class="fa fa-facebook"></span></a>
-              <a href="#" class="p-2"><span class="fa fa-twitter"></span></a>
               <a href="#" class="p-2"><span class="fa fa-instagram"></span></a>
             </p>
           </div>

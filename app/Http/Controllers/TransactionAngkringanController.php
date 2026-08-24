@@ -20,7 +20,13 @@ class TransactionAngkringanController extends Controller
     $query = TransactionAngkringan::query();
 
     // Filter tanggal
-    if ($request->filled('date')) {
+    if ($request->filled('start_date') && $request->filled('end_date')) {
+        $query->whereBetween('tanggal', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+    } elseif ($request->filled('start_date')) {
+        $query->where('tanggal', '>=', $request->start_date . ' 00:00:00');
+    } elseif ($request->filled('end_date')) {
+        $query->where('tanggal', '<=', $request->end_date . ' 23:59:59');
+    } elseif ($request->filled('date')) {
         $query->whereDate('tanggal', $request->date);
     }
 

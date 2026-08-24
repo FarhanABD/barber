@@ -11,15 +11,17 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+   protected $fillable = [
     'transaction_code',
     'no_antrian',
     'customer_name',
+    'nama_kasir', // 🔥 TAMBAHAN
     'barber_id',
     'diskon',
     'total_price',
-    'metode_pembayaran',
+    'booking_id',
 ];
+
 
 
     /* ================= RELATION ================= */

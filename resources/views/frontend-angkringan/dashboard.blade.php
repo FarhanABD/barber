@@ -226,72 +226,25 @@
           </div>
         </div>
 
-        <div class="chef-recommendations" data-aos="fade-up" data-aos-delay="500">
-          <div class="section-header">
-            <h3><i class="bi bi-star-fill"></i> Popular Menu</h3>
-            <p>Popular Menu dari angkringan kami</p>
-          </div>
+        <div class="promo-special py-5" data-aos="fade-up" data-aos-delay="500">
+    
+    <div class="section-header text-center mb-4">
+        <h3><i class="bi bi-star-fill text-warning"></i> Promo Special Menu</h3>
+    </div>
 
-          <div class="row g-4">
-            <div class="col-lg-6">
-              <div class="recommendation-card">
-                <div class="recommendation-image">
-                  <img src="{{ asset('frontend-angkringan/img/restaurant/main-9.webp') }}" alt="Chef Recommendation" class="img-fluid">
-                  <div class="chef-badge">
-                    <i class="bi bi-award"></i>
-                    <span>Chef's Pick</span>
-                  </div>
-                </div>
-                <div class="recommendation-content">
-                  <div class="recommendation-header">
-                    <h4>Pan-Seared Duck Breast</h4>
-                    <div class="recommendation-price">$34.50</div>
-                  </div>
-                  <p>Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum.</p>
-                  <div class="recommendation-details">
-                    <div class="serving-info">
-                      <i class="bi bi-clock"></i>
-                      <span>25 min preparation</span>
-                    </div>
-                    <div class="dietary-info">
-                      <span class="mini-badge gluten-free">GF</span>
-                      <span class="mini-badge dairy-free">DF</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <div class="container">
+    <div class="row justify-content-center g-4">
 
-            <div class="col-lg-6">
-              <div class="recommendation-card">
-                <div class="recommendation-image">
-                  <img src="{{ asset('frontend-angkringan/img/restaurant/main-8.webp') }}" alt="Chef Recommendation" class="img-fluid">
-                  <div class="chef-badge">
-                    <i class="bi bi-award"></i>
-                    <span>Chef's Pick</span>
-                  </div>
-                </div>
-                <div class="recommendation-content">
-                  <div class="recommendation-header">
-                    <h4>Lobster Thermidor Risotto</h4>
-                    <div class="recommendation-price">$39.95</div>
-                  </div>
-                  <p>Fusce dapibus tellus ac cursus commodo tortor mauris condimentum nibh ut fermentum massa.</p>
-                  <div class="recommendation-details">
-                    <div class="serving-info">
-                      <i class="bi bi-clock"></i>
-                      <span>30 min preparation</span>
-                    </div>
-                    <div class="dietary-info">
-                      <span class="mini-badge seafood">SF</span>
-                      <span class="mini-badge premium">Premium</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="col-12 col-md-6 col-lg-5 text-center">
+            <img src="{{ asset('frontend-angkringan/img/menu-puasa.jpeg') }}" 
+                 class="img-fluid rounded shadow promo-img"
+                 alt="Promo Menu">
         </div>
+
+    </div>
+</div>
+
+</div>
 
       </div>
 

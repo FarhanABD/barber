@@ -32,7 +32,13 @@ class TransactionController extends Controller
     }
 
     // 📅 FILTER TANGGAL
-    if ($request->filled('date')) {
+    if ($request->filled('start_date') && $request->filled('end_date')) {
+        $query->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+    } elseif ($request->filled('start_date')) {
+        $query->where('created_at', '>=', $request->start_date . ' 00:00:00');
+    } elseif ($request->filled('end_date')) {
+        $query->where('created_at', '<=', $request->end_date . ' 23:59:59');
+    } elseif ($request->filled('date')) {
         $query->whereDate('created_at', $request->date);
     }
 
@@ -56,13 +62,15 @@ class TransactionController extends Controller
   public function store(Request $request)
 {
     $request->validate([
-        'customer_name' => 'required|string|max:255',
-        'barber_id'     => 'required|exists:barbers,id',
-        'services'      => 'required|array|min:1',
-        'services.*'    => 'exists:services,id',
-        'diskon'        => 'nullable|integer|min:0|max:100',
-        'booking_id'    => 'nullable|exists:bookings,id',
-    ]);
+    'customer_name' => 'required|string|max:255',
+    'nama_kasir'    => 'nullable|string|max:255', // 🔥 TAMBAHAN
+    'barber_id'     => 'required|exists:barbers,id',
+    'services'      => 'required|array|min:1',
+    'services.*'    => 'exists:services,id',
+    'diskon'        => 'nullable|integer|min:0|max:100',
+    'booking_id'    => 'nullable|exists:bookings,id',
+]);
+
 
     DB::beginTransaction();
 
@@ -73,15 +81,17 @@ class TransactionController extends Controller
         // Generate kode transaksi (lebih aman)
         $lastNumber = Transaction::whereDate('created_at', today())->lockForUpdate()->count() + 1;
 
-        $transaction = Transaction::create([
-            'transaction_code' => 'TRX-' . now()->format('Ymd') . '-' . str_pad($lastNumber, 4, '0', STR_PAD_LEFT),
-            'no_antrian'       => $noAntrian,
-            'customer_name'   => $request->customer_name,
-            'barber_id'       => $request->barber_id,
-            'diskon'          => $request->diskon ?? 0,
-            'total_price'     => 0,
-            'booking_id'      => $request->booking_id,
-        ]);
+      $transaction = Transaction::create([
+    'transaction_code' => 'TRX-' . now()->format('Ymd') . '-' . str_pad($lastNumber, 4, '0', STR_PAD_LEFT),
+    'no_antrian'       => $noAntrian,
+    'customer_name'    => $request->customer_name,
+    'nama_kasir'       => $request->nama_kasir, // 🔥 TAMBAHAN
+    'barber_id'        => $request->barber_id,
+    'diskon'           => $request->diskon ?? 0,
+    'total_price'      => 0,
+    'booking_id'       => $request->booking_id,
+]);
+
 
         $totalAwal = 0;
 
