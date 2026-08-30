@@ -42,7 +42,7 @@ class MenuController extends Controller
 
         $gambarPath = null;
         if ($request->hasFile('gambar')) {
-            $gambarPath = $request->file('gambar')->store('images/menu', 'public');
+            $gambarPath = $request->file('gambar')->store('menu', 'public');
         }
 
         Menu::create([
@@ -90,7 +90,7 @@ class MenuController extends Controller
             }
 
             $menu->gambar = $request->file('gambar')
-                ->store('images/menu', 'public');
+                ->store('menu', 'public');
         }
 
         $menu->update([

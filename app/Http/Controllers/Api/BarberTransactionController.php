@@ -90,4 +90,22 @@ public function store(Request $request)
     }
 }
 
+public function index(Request $request)
+{
+    $query = Transaction::with(['barber', 'items.service']);
+
+    $date = $request->date ?? $request->tanggal;
+    if ($date) {
+        $query->whereDate('created_at', $date);
+    }
+
+    $transactions = $query->latest()->get();
+
+    return response()->json([
+        'success' => true,
+        'status' => true,
+        'data' => $transactions
+    ]);
+}
+
 }

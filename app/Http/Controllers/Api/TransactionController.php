@@ -130,5 +130,38 @@ public function storeAngkringan(Request $request)
     }
 }
 
+    public function index(Request $request)
+    {
+        $date = $request->date ?? today()->toDateString();
+
+        $barberQuery = Transaction::query();
+        $angkringanQuery = TransactionAngkringan::query();
+
+        if ($date) {
+            $barberQuery->whereDate('created_at', $date);
+            $angkringanQuery->whereDate('tanggal', $date);
+        }
+
+        $totalBarber = $barberQuery->sum('total_price');
+        $totalAngkringan = $angkringanQuery->sum('total');
+        $grandTotal = $totalBarber + $totalAngkringan;
+
+        $barberTrxCount = $barberQuery->count();
+        $angkringanTrxCount = $angkringanQuery->count();
+        $totalTrxCount = $barberTrxCount + $angkringanTrxCount;
+
+        return response()->json([
+            'success' => true,
+            'status' => true,
+            'data' => [
+                'total_barber' => $totalBarber,
+                'total_angkringan' => $totalAngkringan,
+                'grand_total' => $grandTotal,
+                'barber_count' => $barberTrxCount,
+                'angkringan_count' => $angkringanTrxCount,
+                'total_count' => $totalTrxCount,
+            ]
+        ]);
+    }
 
 }

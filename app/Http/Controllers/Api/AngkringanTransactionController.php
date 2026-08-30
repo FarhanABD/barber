@@ -71,4 +71,26 @@ class AngkringanTransactionController extends Controller
     }
 }
 
+    public function index(Request $request)
+    {
+        $query = TransactionAngkringan::with(['items.menu']);
+
+        $date = $request->date ?? $request->tanggal;
+        if ($date) {
+            $query->whereDate('tanggal', $date);
+        }
+
+        if ($request->filled('kasir')) {
+            $query->where('nama_kasir', $request->kasir);
+        }
+
+        $transactions = $query->latest('tanggal')->get();
+
+        return response()->json([
+            'success' => true,
+            'status' => true,
+            'data' => $transactions
+        ]);
+    }
+
 }

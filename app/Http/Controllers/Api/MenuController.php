@@ -10,7 +10,7 @@ class MenuController extends Controller
 {
   public function index()
 {
-    $menus = Menu::where('status', 'aktif')
+    $menus = Menu::where('status', true)
         ->get()
         ->map(function($m){
 
