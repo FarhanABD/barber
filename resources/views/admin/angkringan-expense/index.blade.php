@@ -8,7 +8,7 @@
 <div class="main-content">
     <section class="section">
         <div class="section-header justify-content-between">
-            <h1>Data Pengeluaran Angkringan</h1>
+            <h1>Data Pengeluaran Bahan Baku Angkringan</h1>
         </div>
 
         <div class="section-body">

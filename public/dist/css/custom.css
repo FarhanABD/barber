@@ -467,3 +467,8 @@ hr.invoice-above-table {
     font-size: var(--font-size-common-1);
 }
 
+.badge.badge-warning {
+    background-color: #ffa426 !important;
+    color: #ffffff !important;
+}
+

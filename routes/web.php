@@ -15,6 +15,8 @@ use App\Http\Controllers\{
     MitraController,
     IncomeController,
     AngkringanExpenseController,
+    MasterKaryawanController,
+    PengeluaranGajiController,
 };
 
 /* ================= PUBLIC ================= */
@@ -102,4 +104,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     ->names('mitras');
     Route::get('mitras/{id}/show',[MitraController::class, 'show'])->name('mitras.show');
     Route::get('karyawan/{id}', [KaryawanController::class, 'show'])->name('karyawan.show');
+    Route::resource('master-karyawan', MasterKaryawanController::class);
+    Route::resource('pengeluaran-gaji', PengeluaranGajiController::class);
+    Route::get('pengeluaran-gaji/{id}/print', [PengeluaranGajiController::class, 'print'])->name('pengeluaran-gaji.print');
+    Route::get('pengeluaran-gaji/{id}/pdf', [PengeluaranGajiController::class, 'downloadPdf'])->name('pengeluaran-gaji.pdf');
 });

@@ -35,7 +35,9 @@
                     <li class="{{ Request::is('admin/menus') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.menus.index') }}"><i class="fas fa-hand-point-right"></i> <span>Menu</span></a></li>
 
                      <li class="{{ Request::is('admin/transaction-angkringan') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.transaction-angkringan.index') }}"><i class="fas fa-hand-point-right"></i> <span>Data Transaksi Angkringan</span></a></li>
-                     <li class="{{ Request::is('admin/angkringan-expense*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.angkringan-expense.index') }}"><i class="fas fa-hand-point-right"></i> <span>Pengeluaran Angkringan</span></a></li>
+                     <li class="{{ Request::is('admin/angkringan-expense*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.angkringan-expense.index') }}"><i class="fas fa-hand-point-right"></i> <span> Bahan Baku Angkringan</span></a></li>
+                     <li class="{{ Request::is('admin/master-karyawan*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.master-karyawan.index') }}"><i class="fas fa-hand-point-right"></i> <span>Master Karyawan</span></a></li>
+                     <li class="{{ Request::is('admin/pengeluaran-gaji*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.pengeluaran-gaji.index') }}"><i class="fas fa-hand-point-right"></i> <span>Pengeluaran Gaji</span></a></li>
                 </ul>
             </aside>
             @if(auth()->user()->role === 'admin')

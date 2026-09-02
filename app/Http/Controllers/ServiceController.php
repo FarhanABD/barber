@@ -10,7 +10,7 @@ class ServiceController extends Controller
     
    public function index()
 {
-    $services = Service::orderBy('id', 'desc')->get();
+    $services = Service::orderBy('id', 'asc')->get();
     return view('admin.layanan.index', compact('services'));
 }
 
