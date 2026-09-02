@@ -89,23 +89,31 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/transaction-angkringan/export',[TransactionAngkringanController::class, 'export'])->name('transaction-angkringan.export');
 
 
-    Route::get('/income', [IncomeController::class, 'index'])
-    ->name('income');
-
-    Route::resource('angkringan-expense', AngkringanExpenseController::class)->only(['index', 'destroy']);
-    Route::patch('angkringan-expense/{id}/status', [AngkringanExpenseController::class, 'updateStatus'])->name('angkringan-expense.status');
-
-
-          Route::resource(
+    Route::resource(
         'transaction-angkringan',
         TransactionAngkringanController::class
     );
-    Route::resource('mitras', MitraController::class)
-    ->names('mitras');
-    Route::get('mitras/{id}/show',[MitraController::class, 'show'])->name('mitras.show');
     Route::get('karyawan/{id}', [KaryawanController::class, 'show'])->name('karyawan.show');
-    Route::resource('master-karyawan', MasterKaryawanController::class);
-    Route::resource('pengeluaran-gaji', PengeluaranGajiController::class);
-    Route::get('pengeluaran-gaji/{id}/print', [PengeluaranGajiController::class, 'print'])->name('pengeluaran-gaji.print');
-    Route::get('pengeluaran-gaji/{id}/pdf', [PengeluaranGajiController::class, 'downloadPdf'])->name('pengeluaran-gaji.pdf');
+
+    /* ----- KHUSUS ROLE ADMIN ----- */
+    Route::middleware('admin')->group(function () {
+        // Pendapatan
+        Route::get('/income', [IncomeController::class, 'index'])->name('income');
+
+        // Bahan Baku Angkringan (Expense)
+        Route::resource('angkringan-expense', AngkringanExpenseController::class)->only(['index', 'destroy']);
+        Route::patch('angkringan-expense/{id}/status', [AngkringanExpenseController::class, 'updateStatus'])->name('angkringan-expense.status');
+
+        // Mitra Angkringan
+        Route::resource('mitras', MitraController::class)->names('mitras');
+        Route::get('mitras/{id}/show', [MitraController::class, 'show'])->name('mitras.show');
+
+        // Master Karyawan
+        Route::resource('master-karyawan', MasterKaryawanController::class);
+
+        // Pengeluaran Gaji
+        Route::resource('pengeluaran-gaji', PengeluaranGajiController::class);
+        Route::get('pengeluaran-gaji/{id}/print', [PengeluaranGajiController::class, 'print'])->name('pengeluaran-gaji.print');
+        Route::get('pengeluaran-gaji/{id}/pdf', [PengeluaranGajiController::class, 'downloadPdf'])->name('pengeluaran-gaji.pdf');
+    });
 });
