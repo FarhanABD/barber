@@ -97,8 +97,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
     /* ----- KHUSUS ROLE ADMIN ----- */
     Route::middleware('admin')->group(function () {
-        // Pendapatan
+        // Pendapatan & Laba Rugi
         Route::get('/income', [IncomeController::class, 'index'])->name('income');
+        Route::get('/income/pdf', [IncomeController::class, 'downloadPdf'])->name('income.pdf');
 
         // Bahan Baku Angkringan (Expense)
         Route::resource('angkringan-expense', AngkringanExpenseController::class)->only(['index', 'destroy']);
