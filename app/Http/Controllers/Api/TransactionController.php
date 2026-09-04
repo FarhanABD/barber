@@ -20,22 +20,36 @@ public function storeBarber(Request $request)
     DB::beginTransaction();
 
     try {
+        $items = $request->items ?? $request->services ?? [];
+
+        $today = now()->format('Ymd');
+        $last = Transaction::whereDate('created_at', today())
+            ->orderBy('id', 'desc')
+            ->first();
+        $lastNumber = 1;
+        if ($last && str_contains($last->transaction_code, '-')) {
+            $parts = explode('-', $last->transaction_code);
+            $lastNumber = intval(end($parts)) + 1;
+        }
+        $transactionCode = 'TRX-' . $today . '-' . str_pad($lastNumber, 4, '0', STR_PAD_LEFT);
+        $noAntrian = Transaction::whereDate('created_at', today())->count() + 1;
 
         $trx = Transaction::create([
-            'transaction_code' => 'TRX-' . time(),
-            'no_antrian' => rand(1,999),
-            'customer_name' => $request->customer_name,
-            'barber_id' => $request->barber_id,
-            'diskon' => $request->diskon,
-            'total_price' => $request->total,
-            'metode_pembayaran' => $request->payment,
+            'transaction_code' => $transactionCode,
+            'no_antrian'       => $noAntrian,
+            'customer_name'    => $request->customer_name,
+            'barber_id'        => $request->barber_id,
+            'diskon'           => $request->diskon ?? 0,
+            'total_price'      => $request->total ?? $request->total_price ?? 0,
+            'metode_pembayaran'=> $request->metode_pembayaran ?? $request->payment,
+            'nama_kasir'       => $request->nama_kasir ?? $request->kasir,
         ]);
 
-        foreach ($request->services as $item) {
+        foreach ($items as $item) {
             TransactionItem::create([
                 'transaction_id' => $trx->id,
-                'service_id' => $item['service_id'],
-                'price' => $item['price'],
+                'service_id'     => $item['service_id'],
+                'price'          => $item['price'],
             ]);
         }
 
@@ -52,7 +66,7 @@ public function storeBarber(Request $request)
 
         return response()->json([
             'success' => false,
-            'error' => $e->getMessage()
+            'error'   => $e->getMessage()
         ], 500);
     }
 }
@@ -74,7 +88,6 @@ public function storeAngkringan(Request $request)
 
     try {
 
-        // 🔹 HITUNG TOTAL DARI DB
         $total = 0;
         foreach ($request->items as $item) {
             $menu = \App\Models\Menu::findOrFail($item['menu_id']);
@@ -86,7 +99,6 @@ public function storeAngkringan(Request $request)
             ? $bayar - $total
             : 0;
 
-        // 🔹 SIMPAN TRANSAKSI (TANPA mitra)
         $trx = TransactionAngkringan::create([
             'kode_transaksi'    => 'ANG-' . now()->format('YmdHis'),
             'tanggal'           => now(),
@@ -98,7 +110,6 @@ public function storeAngkringan(Request $request)
             'nama_kasir'        => $request->kasir,
         ]);
 
-        // 🔹 SIMPAN ITEM + MITRA
         foreach ($request->items as $item) {
             $menu = \App\Models\Menu::findOrFail($item['menu_id']);
 
@@ -125,7 +136,7 @@ public function storeAngkringan(Request $request)
 
         return response()->json([
             'success' => false,
-            'error' => $e->getMessage()
+            'error'   => $e->getMessage()
         ], 500);
     }
 }
